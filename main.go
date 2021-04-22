@@ -5,8 +5,10 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/hatobus/reaction-counter/reaction"
 	"github.com/slack-go/slack"
+
+	"github.com/hatobus/reaction-counter/comment"
+	"github.com/hatobus/reaction-counter/reaction"
 )
 
 var s *slack.Client
@@ -38,7 +40,9 @@ func ReactionCounter(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		log.Println(reacted)
+		reactions := reaction.AggregateReactions(reacted)
+
+		comment.PostReactionCountedMessage(commands.ChannelID, commands.Text, reactions)
 	default:
 	}
 }
