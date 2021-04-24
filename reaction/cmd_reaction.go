@@ -34,7 +34,11 @@ func GetReactedUsers(sc *slack.Client, cmdTxt string) (map[string][]string, erro
 	reactionData := map[string][]string{}
 
 	for _, reaction := range reactions {
-		reactionData[reaction.Name] = reaction.Users
+		users, err := getUserNameFromUserID(sc, reaction.Users)
+		if err != nil {
+			return nil, err
+		}
+		reactionData[reaction.Name] = users
 	}
 
 	return reactionData, nil
