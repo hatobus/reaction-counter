@@ -42,7 +42,13 @@ func ReactionCounter(w http.ResponseWriter, r *http.Request) {
 
 		reactions := reaction.AggregateReactions(reacted)
 
-		comment.PostReactionCountedMessage(commands.ChannelID, commands.Text, reactions)
+		err = comment.PostReactionCountedMessage(s, commands.ChannelID, commands.Text, reactions)
+		if err != nil {
+			log.Printf("failed to post message: %v", err)
+			http.Error(w, "server error", http.StatusInternalServerError)
+			return
+		}
 	default:
+		log.Println(commands)
 	}
 }
