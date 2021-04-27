@@ -6,17 +6,20 @@ import (
 	"github.com/slack-go/slack"
 )
 
-func PostReactionCountedMessage(channelID, urlStr string, reactions map[string]string) {
+func PostReactionCountedMessage(sc *slack.Client, channelID, urlStr string, reactions map[string]string) error {
 	for emoji, users := range reactions {
-		block := slack.NewTextBlockObject("plain_text", users, false, false)
-
-		msg := &slack.Message{
-			Msg: slack.Msg{Channel: channelID,
-				Text:   fmt.Sprintf("%v に %v のリアクションをつけた方は以下のようになっています", urlStr, emoji),
-				Blocks: slack.Blocks{BlockSet: []slack.Block{block}},
-			},
+		textMsg := slack.MsgOptionText(fmt.Sprintf("%v に :%v: のリアクションをつけた方は以下のようになっています", urlStr, emoji), true)
+		_, _, err := sc.PostMessage(channelID, textMsg)
+		if err != nil {
+			return err
 		}
 
-		slack.NewMessageItem(channelID, msg)
+		reactions := slack.MsgOptionBlocks(
+			slack.NewSectionBlock(slack.NewTextBlockObject("plain_text", users, false, false), nil, nil))
+		_, _, err = sc.PostMessage(channelID, reactions)
+		if err != nil {
+			return err
+		}
 	}
+	return nil
 }
