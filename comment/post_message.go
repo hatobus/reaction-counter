@@ -15,7 +15,7 @@ func PostReactionCountedMessage(sc *slack.Client, channelID, urlStr string, reac
 		}
 
 		reactions := slack.MsgOptionBlocks(
-			slack.NewSectionBlock(slack.NewTextBlockObject("plain_text", users, false, false), nil, nil))
+			slack.NewSectionBlock(slack.NewTextBlockObject("mrkdwn", fmt.Sprintf("```%v```", users), false, false), nil, nil))
 		_, _, err = sc.PostMessage(channelID, reactions)
 		if err != nil {
 			return err
