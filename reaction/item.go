@@ -19,7 +19,8 @@ func ItemRef(u *url.URL) (*slack.ItemRef, error) {
 	if queries.Get("thread_ts") != "" {
 		item.Timestamp = queries.Get("thread_ts")
 	} else {
-		pf, err := strconv.ParseFloat(params[len(params)-1], 64)
+		unixTimeStr := strings.TrimPrefix(params[len(params)-1], "p")
+		pf, err := strconv.ParseFloat(unixTimeStr, 64)
 		if err != nil {
 			return nil, err
 		}

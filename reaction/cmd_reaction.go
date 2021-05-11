@@ -28,7 +28,7 @@ func GetReactedUsers(sc *slack.Client, cmdTxt string) (map[string][]string, erro
 
 	reactions, err := sc.GetReactions(*item, slack.GetReactionsParameters{Full: true})
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("get reaction failed: %+v", err)
 	}
 
 	reactionData := map[string][]string{}
@@ -36,7 +36,7 @@ func GetReactedUsers(sc *slack.Client, cmdTxt string) (map[string][]string, erro
 	for _, reaction := range reactions {
 		users, err := getUserNameFromUserID(sc, reaction.Users)
 		if err != nil {
-			return nil, err
+			return nil, fmt.Errorf("get username failed: %+v", err)
 		}
 		reactionData[reaction.Name] = users
 	}
